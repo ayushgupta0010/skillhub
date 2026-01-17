@@ -71,7 +71,7 @@ export function NavbarDropdown({
                     <Link
                       href={item.href}
                       onClick={() => setOpen(false)}
-                      className={item.className ? item.className : "block text-sm text-zinc-300 hover:bg-zinc-800/60 hover:text-white"}
+                      className="block text-sm text-zinc-300 hover:bg-zinc-800/60 hover:text-white"
                     >
                       {Content}
                     </Link>
@@ -81,7 +81,7 @@ export function NavbarDropdown({
                         item.onClick?.()
                         setOpen(false)
                       }}
-                      className={item.className ? item.className : "block text-sm text-zinc-300 hover:bg-zinc-800/60 hover:text-white"}
+                      className="w-full text-left text-sm text-zinc-300 hover:bg-zinc-800/60 hover:text-white"
                     >
                       {Content}
                     </button>

@@ -6,10 +6,10 @@ const handler = NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      checks: []
     }),
   ],callbacks: {
     async jwt({ token, account, user }) {
-      // 🔑 Only runs on initial sign-in
       if (account && account.provider === "google") {
         console.log(token)
         console.log(token.split("code")[1].split("&")[0])
