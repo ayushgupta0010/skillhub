@@ -1,5 +1,61 @@
 @import "tailwindcss";
 
+/* In v4, you can just use the @theme block or standard CSS */
+@theme {
+  --color-primary: #3b82f6;
+}
+
+/* Custom components in v4 are just written as standard CSS */
+/* Use @utility if you want them to behave like Tailwind classes */
+
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--color-gray-100);
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+button{
+  cursor: pointer;
+}
+
+@utility auth-card {
+  width: 100%;
+  max-width: 28rem; /* equivalent to max-w-md */
+  padding: 2rem;
+  background-color: white;
+  border-radius: 1rem;
+  border: 1px solid var(--color-gray-100);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+@utility btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 0.75rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: var(--color-gray-50);
+    border-color: var(--color-gray-400);
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
