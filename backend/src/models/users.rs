@@ -1,5 +1,5 @@
+pub use super::_entities::users::{ActiveModel, Column, Entity, Model};
 use sea_orm::entity::prelude::*;
-pub use super::_entities::users::{ActiveModel, Model, Entity};
 pub type Users = Entity;
 
 #[async_trait::async_trait]
@@ -19,7 +19,19 @@ impl ActiveModelBehavior for ActiveModel {
 }
 
 // implement your read-oriented logic here
-impl Model {}
+impl Model {
+    pub async fn find_by_id(db: &DbConn, user_id: i32) -> Option<Self> {
+        Entity::find_by_id(user_id).one(db).await.unwrap()
+    }
+
+    pub async fn find_by_email(db: &DbConn, email: &str) -> Option<Self> {
+        Entity::find()
+            .filter(Column::Email.eq(email.to_owned()))
+            .one(db)
+            .await
+            .unwrap()
+    }
+}
 
 // implement your write-oriented logic here
 impl ActiveModel {}

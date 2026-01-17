@@ -14,8 +14,7 @@ pub struct Model {
     pub last_name: String,
     #[sea_orm(unique)]
     pub email: String,
-    #[sea_orm(unique)]
-    pub discord_id: String,
+    pub discord_id: Option<String>,
     pub provider: String,
     pub token_version: i32,
 }

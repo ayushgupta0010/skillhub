@@ -2,7 +2,5 @@
 
 pub mod prelude;
 
-pub mod learns;
 pub mod skills;
-pub mod teaches;
 pub mod users;
