@@ -1,23 +1,36 @@
 @import "tailwindcss";
 
+/* In v4, you can just use the @theme block or standard CSS */
+@theme {
+  --color-primary: #3b82f6;
+}
+
+/* Custom components in v4 are just written as standard CSS */
+/* Use @utility if you want them to behave like Tailwind classes */
+
+.auth-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--color-gray-100);
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+button{
+  cursor: pointer;
+}
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+h1{
+  font-size: 300%;
+  font-weight: bold
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 body {
   background: var(--background);
