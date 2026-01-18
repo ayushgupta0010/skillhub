@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     models::{
         skills::ActiveModel as SkillAM,
+        users::Model as UserModel,
         users_learns_skills::{self, Model as UserLearnSkillsModel},
         users_teaches_skills::{self, Model as UserTeachSkillsModel},
     },
@@ -84,7 +85,7 @@ pub async fn save_skills_learn(
 
 #[derive(Serialize)]
 pub struct TeacherMatch {
-    pub teacher_id: i32,
+    pub user: UserModel,
     pub score: usize,
 }
 
@@ -148,10 +149,13 @@ pub async fn recommend(auth: MyJWT, State(ctx): State<AppContext>) -> Result<Res
     }
 
     // 4) sort by score descending
-    let mut matches: Vec<_> = scores
-        .into_iter()
-        .map(|(teacher_id, score)| TeacherMatch { teacher_id, score })
-        .collect();
+    let mut matches: Vec<TeacherMatch> = Vec::new();
+
+    for (teacher_id, score) in scores {
+        if let Some(user) = UserModel::find_by_id(&ctx.db, teacher_id).await {
+            matches.push(TeacherMatch { user, score });
+        }
+    }
 
     matches.sort_by(|a, b| b.score.cmp(&a.score));
 
