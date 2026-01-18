@@ -10,8 +10,6 @@ import { useAuth } from "./AuthProvider";
 export function Navbar() {
   const { isLoggedIn, accessToken, userData } = useAuth();
 
-  console.log(userData)
-
   const userMenu = [
     { href: "/profile", label: "My Profile", icon: UserPen },
     { href: "/messages", label: "Messages", icon: MessageSquare },

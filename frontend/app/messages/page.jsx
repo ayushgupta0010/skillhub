@@ -1,87 +1,69 @@
 "use client";
 
 import { PageMain } from "../components/pageMain.jsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axiosClient from "../axiosClient.js";
+import { useAuth } from "../components/AuthProvider.jsx";
+
+
+async function getContacts(accessToken){
+  return await axiosClient("api/contact", null, accessToken, "GET")
+}
 
 export default function MessagesPage() {
   const [currentChat, setCurrentChat] = useState({ name: "", lastContact: "", messages: [] });
+  const { isLoggedIn, accessToken, userData } = useAuth();
+  const [messages, setMessages] = useState([])
 
-  const messages = [
-    {
-      name: "Bob",
-      lastContact: new Date("1/18/26"),
-      messages: [
-        { time: new Date("1/18/26 09:00:00"), from: "Bob", content: "hey man" },
-        { time: new Date("1/18/26 09:05:00"), from: "me", content: "smells like up dog in here" }
-      ]
-    },
-    {
-      name: "Alice",
-      lastContact: new Date("1/17/26"),
-      messages: [
-        { time: new Date("1/17/26 14:20:00"), from: "Alice", content: "Did you see the notes from the meeting?" }
-      ]
-    },
-    {
-      name: "Charlie",
-      lastContact: new Date("1/18/26"),
-      messages: [
-        { time: new Date("1/18/26 10:30:00"), from: "Charlie", content: "Lunch at 12?" },
-        { time: new Date("1/18/26 10:32:00"), from: "me", content: "No." }
-      ]
-    },
-    {
-      name: "Diana",
-      lastContact: new Date("1/15/26"),
-      messages: [
-        { time: new Date("1/15/26 18:00:00"), from: "Diana", content: "Happy Birthday!" }
-      ]
-    },
-    {
-      name: "Evan",
-      lastContact: new Date("1/18/26"),
-      messages: [
-        { time: new Date("1/18/26 08:15:00"), from: "Evan", content: "Dude I fucking love Porygon-Z" }
-      ]
-    },
-    {
-      name: "Ayush",
-      lastContact: new Date("1/15/26"),
-      messages: [
-        { time: new Date("1/15/26 08:14:00"), from: "Ayush", content: "Dude which color" },
-        { time: new Date("1/15/26 08:15:00"), from: "me", content: "I dont know what you're talking about man" },
-      ]
-    },
-    {
-      name: "Cysyk",
-      lastContact: new Date("1/1/26"),
-      messages: [
-        { time: new Date("1/1/26 08:15:00"), from: "Cysyk", content: "Oops haha I ran into your car again" },
-        { time: new Date("12/31/25 08:14:00"), from: "Cysyk", content: "Oh silly me I blew up SERC again murdering thousands" },
-        { time: new Date("12/1/25 08:14:00"), from: "Cysyk", content: "Have you seen the giggler?" }
-      ]
+  
+  useEffect(() => {
+
+    const ws = new WebSocket("ws://localhost:5150/ws?token=" + accessToken)
+    ws.onopen = () => {
+      console.log("web socket is open")
     }
-  ];
+
+  }, [accessToken]);
+
+  useEffect(() => {
+    console.log(accessToken)
+    if (!accessToken) return;
+
+    async function loadContacts() {
+      const res = await getContacts(accessToken);
+      setMessages(res || [])
+      console.log("messages")
+      console.log(res)
+    }
+
+    loadContacts()
+
+
+  }, [accessToken]);
+
 
   return (
     <PageMain>
       <h1 className="text-3xl font-bold mb-4">Messages</h1>
-      <hr className="mb-6 border-zinc-600" />
+      <hr className="mb-6 border-zinc-900" />
 
-      <div className="flex h-[80vh] bg-zinc-600/50">
+      <div className="flex h-[80vh] bg-zinc-800/50">
         {/* Chat List */}
-        <div className="w-1/4 border overflow-y-scroll border-zinc-600 bg-zinc-500/50">
-          {messages.map((chat) => (
+        <div className="w-1/4 border overflow-y-scroll border-zinc-900 bg-white/20">
+          {messages.map((chat, i) => (
             <div
-              key={chat.name}
+              key={i}
               className={`p-4 border-b border-zinc-600 cursor-pointer hover:bg-zinc-700/30 transition-colors ${
                 currentChat.name === chat.name ? "bg-zinc-700/50" : ""
               }`}
               onClick={() => setCurrentChat(chat)}
             >
-              <h2 className="text-lg font-semibold">{chat.name}</h2>
-              <p className="text-xs text-zinc-900">{chat.lastContact.toLocaleString()}</p>
-              <p className="text-sm truncate">{chat.messages[chat.messages.length - 1].from}: {chat.messages[chat.messages.length - 1].content}</p>
+              <div className="flex flex-row justify-start items-center">
+                <img className="w-5 h-5 mr-2" src={chat[1].profile_pic}/>
+                <h2 className="text-lg font-semibold">{chat[1].first_name} {chat[1].last_name}</h2>
+              </div>
+              <p className="text-xs text-zinc-900">{new Date(chat[1].updated_at).toLocaleString()}</p>
+              {/* <p className="text-sm truncate">{chat.messages[chat.messages.length - 1].from}: {chat.messages[chat.messages.length - 1].content}</p> */}
             </div>
           ))}
         </div>
@@ -89,14 +71,14 @@ export default function MessagesPage() {
         {/* Chat Window */}
         <div className="w-3/4 flex flex-col justify-between p-4">
           {/* Header */}
-          <div className="flex justify-between items-center border-b border-zinc-600 pb-2 mb-4">
+          <div className="flex justify-between items-center border-b border-zinc-900 pb-2 mb-4">
             <h2 className="text-2xl font-bold">{currentChat.name || "Select a chat"}</h2>
             {currentChat.lastContact && (
-              <p className="text-sm text-zinc-900">{currentChat.lastContact.toLocaleString()}</p>
+              <p className="text-sm text-zinc-900">{currentChat[1].updated_at.toLocaleString()}</p>
             )}
           </div>
 
-          {/* Messages */}
+          {/* Messages
           <div className="flex-1 flex-col flex overflow-y-auto space-y-3">
             {currentChat.messages.map((message) => (
               <div
@@ -112,7 +94,7 @@ export default function MessagesPage() {
                 <p className="text-left">{message.content}</p>
               </div>
             ))}
-          </div>
+          </div> */}
 
           {/* Input placeholder */}
           <div className="flex flex-row items-center ">
@@ -123,7 +105,7 @@ export default function MessagesPage() {
                 className="w-full p-2 rounded-lg border border-zinc-600 bg-zinc-900 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500"
               />
             </div>
-            <button className="w-1/12 h-full rounded-lg bg-red-500  border border-zinc-600">Send</button>
+            <button className="w-1/12 h-full rounded-lg bg-red-500  border border-zinc-600 hover:bg-red-400">Send</button>
           </div>
         </div>
       </div>

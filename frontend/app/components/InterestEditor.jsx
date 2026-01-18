@@ -26,8 +26,7 @@ export function InterestEditor() {
 
     async function loadSkills() {
       const res = await GETInterestedSkills(accessToken);
-      console.log(`${res} ${Array.isArray(res)}`)
-      if (Array.isArray(res)) {
+      if (Array.isArray(res)) { 
         setInterests(res);
         for(let info of res){
           console.log(info)
@@ -86,5 +85,4 @@ async function GETInterestedSkills(accessToken){
 async function POSTInterestedSkills(data, accessToken){
   data = data.map((data) => ({name: data.skill_name, level: data.level}))
   let res = await axiosClient("api/users/skills/learn", data, accessToken)
-  console.log(res)
 }
