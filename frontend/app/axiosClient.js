@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosClient = async (path, data, accessToken = null, type="POST") => {
-  
+
   try{
     if(type == "POST"){
       var res = await axios.post(
@@ -28,7 +28,6 @@ const axiosClient = async (path, data, accessToken = null, type="POST") => {
     return res.data;
   }
   catch(err){
-    console.log("what do u want from me dude")
     console.log("UHHHHHHHHHH THE ERROR IS \n\n\n\n\n")
     console.log(err.response)
   }

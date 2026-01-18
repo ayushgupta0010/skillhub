@@ -5,9 +5,7 @@ import { redirect, usePathname } from "next/navigation"
 import { MessageSquare, UserPen, LogOut, LogIn, CircleUser} from "lucide-react"
 import { cn } from "../lib/utils.js"
 import { NavbarDropdown } from "./dropdown.jsx"
-import { useAuth } from "./AuthProvider";
-import axiosClient from "../axiosClient.js"
-
+import { useAuth } from "./AuthProvider"; 
 
 export function Navbar() {
   const { isLoggedIn, accessToken, userData } = useAuth();
@@ -19,10 +17,7 @@ export function Navbar() {
     {
       label: "Log Out",
       icon: LogOut,
-      onClick: () => {
-        console.log("test??");
-        axiosClient("api/auth/logout", null, accessToken)
-      },
+      href: "api/auth/logout/"
     },
   ]
 

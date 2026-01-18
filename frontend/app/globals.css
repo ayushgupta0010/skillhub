@@ -4,8 +4,18 @@ html, body{
   height: 100%;
 }
 
-/* Custom components in v4 are just written as standard CSS */
-/* Use @utility if you want them to behave like Tailwind classes */
+hr{
+  margin: 0;
+}
+
+section{
+  margin: 25px;
+  /* text-align: center; */
+}
+
+/* h1, p{
+  text-align: center;
+} */
 
 .auth-container {
   display: flex;
