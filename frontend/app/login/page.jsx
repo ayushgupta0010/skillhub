@@ -8,8 +8,6 @@ export default function LoginPage() {
     <PageMain>
       {/* Ambient background blur */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.15),transparent_60%)]" />
-
-      <div className="w-full max-w-md rounded-2xl border border-white/20 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
         
         <h1 className="mb-2 text-center text-3xl font-bold tracking-tight text-white">
           Welcome to SkillHub
@@ -30,7 +28,6 @@ export default function LoginPage() {
           />
           <span>Continue with Google</span>
         </button>
-      </div>
     </PageMain>
   );
 }

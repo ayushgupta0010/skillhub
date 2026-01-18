@@ -5,30 +5,31 @@ import { usePathname } from "next/navigation"
 import { MessageSquare, UserPen, LogOut, LogIn, CircleUser} from "lucide-react"
 import { cn } from "../lib/utils.js"
 import { NavbarDropdown } from "./dropdown.jsx"
+import { useAuth } from "./AuthProvider";
 
-const userMenu = [
-  { href: "/profile", label: "My Profile", icon: UserPen },
-  { href: "/messages", label: "Messages", icon: MessageSquare },
-  { separator: true },
-  {
-    label: "Sign Out",
-    icon: LogOut,
-    onClick: () => console.log("sign out"),
-  },
-]
-
-let isSignedIn = true
-
-const navLinks = [
-  
-]
-
-const profileLinks = {
-  "signedIn": { href: "", label: "Hello [Name]", icon: CircleUser },
-  "notSignedIn":  { href: "/login", label: "Log In", icon: LogIn },
-}  
 
 export function Navbar() {
+  const { isLoggedIn, userData } = useAuth();
+
+  const userMenu = [
+    { href: "/profile", label: "My Profile", icon: UserPen },
+    { href: "/messages", label: "Messages", icon: MessageSquare },
+    { separator: true },
+    {
+      label: "Sign Out",
+      icon: LogOut,
+      onClick: () => console.log("sign out"),
+    },
+  ]
+
+  const navLinks = [
+    
+  ]
+
+  const profileLinks = {
+    "signedIn": { href: "", label: `Hello ${userData["first_name"]}`, icon: CircleUser },
+    "notSignedIn":  { href: "/login", label: "Log In", icon: LogIn },
+  }  
 
   return (
     <>
@@ -55,7 +56,7 @@ export function Navbar() {
           {/* User Stuff */}
           {
             // if we're signed in, make it a dropdown. if we're not signed in, just the normal not signed in thingy
-            isSignedIn ?
+            isLoggedIn ?
             <NavbarDropdown
               trigger={
                 getHTMLFromLinkData(profileLinks["signedIn"])
