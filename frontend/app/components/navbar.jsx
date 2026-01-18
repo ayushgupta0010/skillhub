@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { redirect, usePathname } from "next/navigation"
-import { MessageSquare, UserPen, LogOut, LogIn, CircleUser} from "lucide-react"
+import { MessageSquare, UserPen, LogOut, LogIn, CircleUser, Handshake} from "lucide-react"
 import { cn } from "../lib/utils.js"
 import { NavbarDropdown } from "./dropdown.jsx"
 import { useAuth } from "./AuthProvider"; 
@@ -15,6 +15,7 @@ export function Navbar() {
   const userMenu = [
     { href: "/profile", label: "My Profile", icon: UserPen },
     { href: "/messages", label: "Messages", icon: MessageSquare },
+    { href: "/board", label: "Learning Board", icon: Handshake },
     { separator: true },
     {
       label: "Log Out",
@@ -78,8 +79,6 @@ export function Navbar() {
 function getHTMLFromLinkData(link){
   const pathname = usePathname()
   const isActive = pathname === link.href
-
-  console.log(link.icon)
 
   return (
       <Link

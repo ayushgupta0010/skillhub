@@ -102,8 +102,8 @@ export default function MessagesPage() {
               <div
                 key={message.time.toISOString()}
                 className={`p-3 rounded-lg ${
-                  message.from === "me" ? "bg-blue-600 text-white self-end" : "bg-zinc-800 text-white self-start"
-                } max-w-[70%]`}
+                  message.from === "me" ? "bg-blue-600 text-white self-end min-w-[30%]" : "bg-zinc-800 text-white self-start"
+                } max-w-[70%] min-w-[30%]`}
               >
                 <div className="flex justify-between text-xs text-zinc-300 mb-1">
                   <span>{message.from}</span>
