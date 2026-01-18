@@ -9,6 +9,8 @@ mod m20260118_015253_create_join_table_user_learns_skill;
 mod m20260118_033734_add_profile_pic_to_users;
 mod m20260118_054403_chats;
 mod m20260118_054722_contacts;
+mod m20260118_081602_create_index_on_users_learns_skills;
+mod m20260118_082401_create_index_on_users_teaches_skills;
 pub struct Migrator;
 
 #[async_trait::async_trait]
@@ -22,6 +24,8 @@ impl MigratorTrait for Migrator {
             Box::new(m20260118_033734_add_profile_pic_to_users::Migration),
             Box::new(m20260118_054403_chats::Migration),
             Box::new(m20260118_054722_contacts::Migration),
+            Box::new(m20260118_081602_create_index_on_users_learns_skills::Migration),
+            Box::new(m20260118_082401_create_index_on_users_teaches_skills::Migration),
             // inject-above (do not remove this comment)
         ]
     }
