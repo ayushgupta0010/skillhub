@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "./AuthProvider";  
+import axiosClient from "../axiosClient"
 
 export function SkillEditor() {
+  const { isLoggedIn, accessToken, userData } = useAuth();
+
   const [skills, setSkills] = useState([
-    { },
+    {name: "", level: "Beginner"},
   ]);
 
   const addSkill = () => {
@@ -17,22 +21,39 @@ export function SkillEditor() {
     setSkills(updated);
   };
 
+  useEffect(() => {
+    if (!accessToken) return;
+
+    async function loadSkills() {
+      const res = await GETLearnedSkills(accessToken);
+      console.log(`${res} ${Array.isArray(res)}`)
+      if (Array.isArray(res)) {
+        setSkills(res);
+        for(let info of res){
+          console.log(info)
+        }
+      }
+    }
+
+    loadSkills();
+  }, [accessToken]);
+
   return (
     <div className="space-y-4">
       {skills.map((skill, i) => (
-        <div key={i} className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div key={i} className="flex flex-row flex-1 align-middle items-center">
           <input
             type="text"
             placeholder="Skill name"
             value={skill.name}
             onChange={(e) => updateSkill(i, "name", e.target.value)}
-            className="rounded-lg bg-zinc-900 border border-white/10 px-3 py-2 text-white"
+            className="rounded-lg bg-zinc-900 flex-111 mr-5 border border-white/10 px-3 py-2 text-white"
           />
 
           <select
             value={skill.level}
             onChange={(e) => updateSkill(i, "level", e.target.value)}
-            className="rounded-lg bg-zinc-900 border border-white/10 px-3 py-2 text-white"
+            className="rounded-lg bg-zinc-900 flex-11 border border-white/10 px-3 py-2 text-white"
           >
             <option>Beginner</option>
             <option>Intermediate</option>
@@ -48,6 +69,17 @@ export function SkillEditor() {
       >
         + Add Teaching Skill
       </button>
+      <button onClick={() => POSTLearnedSkills(skills, accessToken)} className="inline-flex flex-1 items-center rounded-lg bg-teal-500 px-4 py-2 text-sm ml-5 font-semibold text-black hover:bg-amber-400 transition">Submit</button>
+      
     </div>
   );
+}
+
+async function GETLearnedSkills(accessToken){
+  return await axiosClient("api/users/skills/teach", null, accessToken, "GET")
+}
+
+async function POSTLearnedSkills(data, accessToken){
+  let res = await axiosClient("api/users/skills/teach", data, accessToken)
+  console.log(res)
 }

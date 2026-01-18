@@ -10,6 +10,8 @@ import { useAuth } from "./AuthProvider";
 export function Navbar() {
   const { isLoggedIn, accessToken, userData } = useAuth();
 
+  console.log(userData)
+
   const userMenu = [
     { href: "/profile", label: "My Profile", icon: UserPen },
     { href: "/messages", label: "Messages", icon: MessageSquare },
@@ -26,7 +28,7 @@ export function Navbar() {
   ]
 
   const profileLinks = {
-    "signedIn": { href: "", label: `Hello ${userData["first_name"]}`, icon: CircleUser },
+    "signedIn": { href: "", label: `Hello ${userData["first_name"]}`, icon: CircleUser, profile_pic: userData["profile_pic"] },
     "notSignedIn":  { href: "/login", label: "Log In", icon: LogIn },
   }  
 
@@ -77,6 +79,8 @@ function getHTMLFromLinkData(link){
   const pathname = usePathname()
   const isActive = pathname === link.href
 
+  console.log(link.icon)
+
   return (
       <Link
         key={link.href}
@@ -86,7 +90,11 @@ function getHTMLFromLinkData(link){
           isActive ? "text-white bg-zinc-800" : "text-zinc-400 hover:text-white hover:bg-zinc-800/50",
         )}
       >
-        <link.icon className="w-4 h-4" />
+        {(link.profile_pic) 
+        ? 
+        <img className="w-4 h-4" src={link.profile_pic}/>
+        :
+        <link.icon className="w-4 h-4"></link.icon>}
         <span className="hidden sm:inline">{link.label}</span>
         {isActive && (
           <span className="absolute inset-x-0 -bottom-px h-px bg-linear-to-r from-transparent via-zinc-400 to-transparent" />

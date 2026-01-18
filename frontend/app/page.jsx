@@ -102,8 +102,7 @@ export default async function Home() {
                 "Intelligent skill-based matchmaking",
                 "Profile and skill management",
                 "Video calls with automatic AI note-taking",
-                "Group-based skill exchanges",
-                "Discord integration",
+                "Group-based skill exchanges"
               ].map((item) => (
                 <li
                   key={item}

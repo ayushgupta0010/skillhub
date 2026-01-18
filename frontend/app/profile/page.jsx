@@ -5,7 +5,6 @@ import {PageMain} from "../components/pageMain.jsx"
 import { ProfileCard } from "../components/ProfileCard";
 import { SkillEditor } from "../components/SkillEditor";
 import { InterestEditor } from "../components/InterestEditor";
-import { DiscordConnect } from "../components/DiscordConnect";
 
 export default function ProfilePage() {
   const { isLoggedIn, accessToken, userData } = useAuth();
@@ -13,8 +12,13 @@ export default function ProfilePage() {
   return (
     <PageMain>
       <ProfileCard title="General Info">
-        <p>Name: {userData.first_name} {userData.last_name}</p>
-        <p>Email: {userData.email}</p>
+        <div className="flex flex-row justify-between items-center">
+          <div>
+            <p>Name: {userData.first_name} {userData.last_name}</p>
+            <p>Email: {userData.email}</p>
+          </div>
+          <img className="h-15 w-15" src={userData.profile_pic}/>
+        </div>
       </ProfileCard>
         
       <ProfileCard title="Teaching Skills">
@@ -25,9 +29,6 @@ export default function ProfilePage() {
         <InterestEditor />
       </ProfileCard>
 
-      <ProfileCard title="Discord Connection">
-        <DiscordConnect />
-      </ProfileCard>
     </PageMain>
   );
 }
