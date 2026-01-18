@@ -97,12 +97,12 @@ export default function MessagesPage() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto space-y-3">
+          <div className="flex-1 flex-col flex overflow-y-auto space-y-3">
             {currentChat.messages.map((message) => (
               <div
                 key={message.time.toISOString()}
                 className={`p-3 rounded-lg ${
-                  message.from === "me" ? "bg-blue-600 text-white self-end text-right" : "bg-zinc-800 text-white self-start"
+                  message.from === "me" ? "bg-blue-600 text-white self-end" : "bg-zinc-800 text-white self-start"
                 } max-w-[70%]`}
               >
                 <div className="flex justify-between text-xs text-zinc-300 mb-1">
@@ -115,13 +115,15 @@ export default function MessagesPage() {
           </div>
 
           {/* Input placeholder */}
-          <div className="mt-4">
-            <input
-              type="text"
-              placeholder="Type a message..."
-              className="w-full p-2 rounded-lg border border-zinc-600 bg-zinc-900 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500"
-              disabled
-            />
+          <div className="flex flex-row items-center ">
+            <div className=" w-full">
+              <input
+                type="text"
+                placeholder="Type a message..."
+                className="w-full p-2 rounded-lg border border-zinc-600 bg-zinc-900 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <button className="w-1/12 h-full rounded-lg bg-red-500  border border-zinc-600">Send</button>
           </div>
         </div>
       </div>
