@@ -16,12 +16,12 @@ export function DiscordConnect() {
       />
 
       <div className="text-sm text-zinc-300 space-y-2">
-        <p className="font-medium text-white">How to find your Discord ID:</p>
+        <p className="font-medium text-white">How to connect to your Discord:</p>
         <ol className="list-decimal list-inside space-y-1">
-          <li>Open Discord and go to User Settings</li>
+          <li>Open Discord and go to <strong>User Settings</strong></li>
           <li>Enable <strong>Developer Mode</strong> (Advanced)</li>
           <li>Right-click your username → <strong>Copy User ID</strong></li>
-          <li>Paste it here</li>
+          <li>Paste it here and click Save Discord ID!</li>
         </ol>
       </div>
 

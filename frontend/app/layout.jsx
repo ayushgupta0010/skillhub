@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "SkillHub",
-  description: "Learn Skills by People you Teach",
+  description: "Learn From Those You Teach",
 };
 
 export default async function RootLayout({

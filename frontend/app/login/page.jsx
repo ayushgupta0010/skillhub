@@ -5,7 +5,7 @@ import { PageMain } from "../components/pageMain.jsx"
 
 export default function LoginPage() {
   return (
-    <PageMain>
+    <PageMain classes={"items-center"}>
       {/* Ambient background blur */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.15),transparent_60%)]" />
         
@@ -19,7 +19,7 @@ export default function LoginPage() {
 
         <button
           onClick={() => signIn("google", { callbackUrl: "/profile" })}
-          className="group flex w-full items-center justify-center gap-3 rounded-xl bg-white px-5 py-3 font-medium text-gray-800 shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-white/50"
+          className="group flex mx-auto justify-center  gap-3 rounded-xl w-1/3 bg-white px-5 py-3 font-medium text-gray-800 shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-white/50"
         >
           <img
             src="https://authjs.dev/img/providers/google.svg"
