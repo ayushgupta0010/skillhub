@@ -1,8 +1,7 @@
 import axios from "axios";
-import { cookies } from "next/headers";
 
-const axiosClient = async (path, data, token = null, type="POST") => {
-  const accessToken = (await cookies()).get("accessToken")?.value || token;
+const axiosClient = async (path, data, accessToken = null, type="POST") => {
+  
   try{
     if(type == "POST"){
       var res = await axios.post(
