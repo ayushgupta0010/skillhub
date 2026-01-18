@@ -1,5 +1,10 @@
-use sea_orm::entity::prelude::*;
-pub use super::_entities::contacts::{ActiveModel, Model, Entity};
+use crate::models::{
+    _entities::contacts,
+    users::{Entity as UserEntity, Model as UserModel},
+};
+
+pub use super::_entities::contacts::{ActiveModel, Column, Entity, Model};
+use sea_orm::{entity::prelude::*, QuerySelect};
 pub type Contacts = Entity;
 
 #[async_trait::async_trait]
@@ -19,7 +24,20 @@ impl ActiveModelBehavior for ActiveModel {
 }
 
 // implement your read-oriented logic here
-impl Model {}
+impl Model {
+    pub async fn find_contacts(db: &DbConn, user_id: i32) -> Vec<(Self, Option<UserModel>)> {
+        contacts::Entity::find()
+            .join(
+                sea_orm::JoinType::LeftJoin,
+                contacts::Relation::Users2.def(), // join on `other`
+            )
+            .select_also(UserEntity)
+            .filter(contacts::Column::You.eq(user_id))
+            .all(db)
+            .await
+            .unwrap()
+    }
+}
 
 // implement your write-oriented logic here
 impl ActiveModel {}

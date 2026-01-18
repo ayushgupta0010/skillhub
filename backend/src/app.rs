@@ -48,6 +48,7 @@ impl Hooks for App {
         AppRoutes::with_default_routes()
             .prefix("/api")
             .add_route(controllers::auth::routes())
+            .add_route(controllers::contact::routes())
             .add_route(controllers::users::routes())
     }
     async fn connect_workers(_ctx: &AppContext, _queue: &Queue) -> Result<()> {
