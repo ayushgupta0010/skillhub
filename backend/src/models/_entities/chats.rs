@@ -12,7 +12,6 @@ pub struct Model {
     pub id: i32,
     #[sea_orm(column_type = "Text")]
     pub msg: String,
-    #[sea_orm(unique)]
     pub group: String,
     pub sender: i32,
 }
