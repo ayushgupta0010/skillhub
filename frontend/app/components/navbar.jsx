@@ -1,24 +1,28 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { redirect, usePathname } from "next/navigation"
 import { MessageSquare, UserPen, LogOut, LogIn, CircleUser} from "lucide-react"
 import { cn } from "../lib/utils.js"
 import { NavbarDropdown } from "./dropdown.jsx"
 import { useAuth } from "./AuthProvider";
+import axiosClient from "../axiosClient.js"
 
 
 export function Navbar() {
-  const { isLoggedIn, userData } = useAuth();
+  const { isLoggedIn, accessToken, userData } = useAuth();
 
   const userMenu = [
     { href: "/profile", label: "My Profile", icon: UserPen },
     { href: "/messages", label: "Messages", icon: MessageSquare },
     { separator: true },
     {
-      label: "Sign Out",
+      label: "Log Out",
       icon: LogOut,
-      onClick: () => console.log("sign out"),
+      onClick: () => {
+        console.log("test??");
+        axiosClient("api/auth/logout", null, accessToken)
+      },
     },
   ]
 

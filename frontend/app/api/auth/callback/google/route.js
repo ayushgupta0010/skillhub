@@ -9,8 +9,6 @@ export async function GET(request) {
 
   try{
     var res = await axiosClient("api/auth/login", {code})
-
-    console.log(res)
   }
   catch(err){
     console.error(err)
@@ -39,5 +37,5 @@ export async function GET(request) {
     sameSite: "strict",
   });
 
-  redirect(`/profile?isSignedIn=true&accessToken=${code}`);
+  redirect(`/profile`);
 }

@@ -26,11 +26,12 @@ export default async function RootLayout({
 }) {
   const isLoggedIn = (await cookies()).has("accessToken")
   if(isLoggedIn){
-    let accessToken = (await cookies()).get("accessToken")
-    var userData = (await axiosClient("api/users/me", {accessToken}, null, "GET"))
+    var accessToken = (await cookies()).get("accessToken")?.value
+    var userData = (await axiosClient("api/users/me", {accessToken}, accessToken, "GET"))
   }
   else{
-    userData = {
+    var accessToken = null
+    var userData = {
       "discord_id": null,
       "email": "",
       "first_name": "Guest",
@@ -45,7 +46,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider isLoggedIn={isLoggedIn} userData={userData}>
+        <AuthProvider isLoggedIn={isLoggedIn} accessToken={accessToken} userData={userData}>
           {children}
         </AuthProvider>
       </body>
