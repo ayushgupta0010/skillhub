@@ -44,8 +44,9 @@ impl Hooks for App {
         Ok(vec![])
     }
 
-    fn routes(_ctx: &AppContext) -> AppRoutes {
+    fn routes(ctx: &AppContext) -> AppRoutes {
         AppRoutes::with_default_routes()
+            .add_route(controllers::ws::routes(ctx))
             .prefix("/api")
             .add_route(controllers::auth::routes())
             .add_route(controllers::contact::routes())
