@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     models::{
-        skills::ActiveModel as SkillAM,
+        skills::{self, ActiveModel as SkillAM},
         users::{self, Entity as UserEntity, Model as UserModel},
         users_learns_skills::{self, Model as UserLearnSkillsModel},
         users_teaches_skills::{self, Model as UserTeachSkillsModel},
@@ -83,12 +83,19 @@ pub async fn save_skills_learn(
     format::json("learn skills saved successfully")
 }
 
+#[derive(Clone, Serialize)]
+pub struct SkillWithMeta {
+    pub skill_id: i32,
+    pub skill_name: String,
+    pub level: String,
+}
+
 #[derive(Serialize)]
 pub struct TeacherMatch {
     pub user: UserModel,
     pub score: usize,
-    pub teaches_skills: Vec<users_teaches_skills::Model>,
-    pub learns_skills: Vec<users_learns_skills::Model>,
+    pub teaches_skills: Vec<SkillWithMeta>,
+    pub learns_skills: Vec<SkillWithMeta>,
 }
 
 fn level_to_score(level: &str) -> usize {
@@ -158,31 +165,57 @@ pub async fn recommend(auth: MyJWT, State(ctx): State<AppContext>) -> Result<Res
         .map(|u| (u.id, u))
         .collect();
 
-    // 5) fetch teaches skills in bulk
-    let teaches_map: std::collections::HashMap<i32, Vec<users_teaches_skills::Model>> =
+    let skill_ids: Vec<i32> = teaches
+        .iter()
+        .map(|t| t.skill_id)
+        .chain(wanted_skills.iter().map(|l| l.skill_id))
+        .collect();
+
+    let skills_map: std::collections::HashMap<i32, skills::Model> = skills::Entity::find()
+        .filter(skills::Column::Id.is_in(skill_ids))
+        .all(&ctx.db)
+        .await?
+        .into_iter()
+        .map(|s| (s.id, s))
+        .collect();
+
+    // 6) teaches skills enriched
+    let teaches_map: std::collections::HashMap<i32, Vec<SkillWithMeta>> =
         users_teaches_skills::Entity::find()
             .filter(users_teaches_skills::Column::UserId.is_in(teacher_ids.clone()))
             .all(&ctx.db)
             .await?
             .into_iter()
             .fold(Default::default(), |mut acc, t| {
-                acc.entry(t.user_id).or_default().push(t);
+                if let Some(skill) = skills_map.get(&t.skill_id) {
+                    acc.entry(t.user_id).or_default().push(SkillWithMeta {
+                        skill_id: skill.id,
+                        skill_name: skill.name.clone(),
+                        level: t.level,
+                    });
+                }
                 acc
             });
 
-    // 6) fetch learns skills in bulk
-    let learns_map: std::collections::HashMap<i32, Vec<users_learns_skills::Model>> =
+    // 7) learns skills enriched
+    let learns_map: std::collections::HashMap<i32, Vec<SkillWithMeta>> =
         users_learns_skills::Entity::find()
             .filter(users_learns_skills::Column::UserId.is_in(teacher_ids.clone()))
             .all(&ctx.db)
             .await?
             .into_iter()
             .fold(Default::default(), |mut acc, l| {
-                acc.entry(l.user_id).or_default().push(l);
+                if let Some(skill) = skills_map.get(&l.skill_id) {
+                    acc.entry(l.user_id).or_default().push(SkillWithMeta {
+                        skill_id: skill.id,
+                        skill_name: skill.name.clone(),
+                        level: l.level,
+                    });
+                }
                 acc
             });
 
-    // 7) assemble response
+    // 8) assemble
     let mut matches: Vec<TeacherMatch> = scores
         .into_iter()
         .filter_map(|(teacher_id, score)| {
