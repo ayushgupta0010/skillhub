@@ -49,6 +49,7 @@ impl Hooks for App {
             .add_route(controllers::ws::routes(ctx))
             .prefix("/api")
             .add_route(controllers::auth::routes())
+            .add_route(controllers::chat::routes())
             .add_route(controllers::contact::routes())
             .add_route(controllers::users::routes())
     }

@@ -1,5 +1,5 @@
+pub use super::_entities::chats::{ActiveModel, Column, Entity, Model};
 use sea_orm::entity::prelude::*;
-pub use super::_entities::chats::{ActiveModel, Model, Entity};
 pub type Chats = Entity;
 
 #[async_trait::async_trait]
@@ -19,7 +19,15 @@ impl ActiveModelBehavior for ActiveModel {
 }
 
 // implement your read-oriented logic here
-impl Model {}
+impl Model {
+    pub async fn find_by_group(db: &DbConn, group: String) -> Vec<Self> {
+        Entity::find()
+            .filter(Column::Group.eq(group))
+            .all(db)
+            .await
+            .unwrap()
+    }
+}
 
 // implement your write-oriented logic here
 impl ActiveModel {}
