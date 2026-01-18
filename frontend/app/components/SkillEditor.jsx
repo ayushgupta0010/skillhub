@@ -8,11 +8,11 @@ export function SkillEditor() {
   const { isLoggedIn, accessToken, userData } = useAuth();
 
   const [skills, setSkills] = useState([
-    {name: "", level: "Beginner"},
+    {skill_name: "", level: "Beginner"},
   ]);
 
   const addSkill = () => {
-    setSkills([...skills, { name: "", level: "Beginner" }]);
+    setSkills([...skills, { skill_name: "", level: "Beginner" }]);
   };
 
   const updateSkill = (index, key, value) => {
@@ -26,7 +26,6 @@ export function SkillEditor() {
 
     async function loadSkills() {
       const res = await GETLearnedSkills(accessToken);
-      console.log(`${res} ${Array.isArray(res)}`)
       if (Array.isArray(res)) {
         setSkills(res);
         for(let info of res){
@@ -45,13 +44,13 @@ export function SkillEditor() {
           <input
             type="text"
             placeholder="Skill name"
-            value={skill.name}
-            onChange={(e) => updateSkill(i, "name", e.target.value)}
+            value={skill?.skill_name}
+            onChange={(e) => updateSkill(i, "skill_name", e.target.value)}
             className="rounded-lg bg-zinc-900 flex-111 mr-5 border border-white/10 px-3 py-2 text-white"
           />
 
           <select
-            value={skill.level}
+            value={skill?.level}
             onChange={(e) => updateSkill(i, "level", e.target.value)}
             className="rounded-lg bg-zinc-900 flex-11 border border-white/10 px-3 py-2 text-white"
           >
@@ -76,10 +75,12 @@ export function SkillEditor() {
 }
 
 async function GETLearnedSkills(accessToken){
+  console.log(accessToken)
   return await axiosClient("api/users/skills/teach", null, accessToken, "GET")
 }
 
 async function POSTLearnedSkills(data, accessToken){
+  data = data.map((data) => ({name: data.skill_name, level: data.level}))
   let res = await axiosClient("api/users/skills/teach", data, accessToken)
   console.log(res)
 }
