@@ -37,6 +37,15 @@ uuid = { version = "1.6", features = ["v4"] }
 jsonwebtoken = "9.3.0"
 reqwest = { version = "0.12.8", features = ["json"] }
 dotenv = "0.15.0"
+sea-orm-pro = "0.1.0"
+tower-service = { version = "0.3" }
+async-graphql-axum = { version = "7.0" }
+seaography = { version = "1.1", features = [
+    "with-decimal",
+    "with-chrono",
+    "with-uuid",
+    "field-snake-case",
+] }
 
 [[bin]]
 name = "backend-cli"

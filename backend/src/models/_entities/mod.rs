@@ -4,3 +4,5 @@ pub mod prelude;
 
 pub mod skills;
 pub mod users;
+
+seaography::register_entity_modules!([users, skills]);

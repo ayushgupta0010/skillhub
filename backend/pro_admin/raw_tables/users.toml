@@ -1,0 +1,33 @@
+[table]
+title = "Users"
+columns = [
+    { title = "ID", field = "id", width = 80 },
+    { field = "name", span = 8 },
+    { field = "email", span = 8 },
+]
+hidden_columns = ["created_at", "updated_at"]
+
+[filter]
+hidden_columns = ["token_version"]
+
+[editor]
+enable = true
+title_field = "name"
+fields = [
+    { title = "ID", field = "id", span = 8 },
+    { field = "name", span = 8 },
+    { field = "email", span = 8 },
+    { field = "provider", span = 6 },
+    { field = "token_version", span = 6 },
+]
+hidden_columns = ["created_at", "updated_at"]
+
+[create]
+enable = false
+
+[update]
+enable = true
+hidden_columns = ["created_at", "updated_at"]
+
+[delete]
+enable = true
