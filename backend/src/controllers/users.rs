@@ -110,7 +110,7 @@ fn level_to_score(level: &str) -> usize {
 
 #[debug_handler]
 pub async fn recommend(auth: MyJWT, State(ctx): State<AppContext>) -> Result<Response> {
-    // 1) fetch all skills the learner wants
+    // fetch all skills the learner wants
     let wanted_skills = users_learns_skills::Entity::find()
         .filter(users_learns_skills::Column::UserId.eq(auth.user.id))
         .all(&ctx.db)
@@ -122,13 +122,13 @@ pub async fn recommend(auth: MyJWT, State(ctx): State<AppContext>) -> Result<Res
 
     let wanted_ids: Vec<i32> = wanted_skills.iter().map(|l| l.skill_id).collect();
 
-    // 2) fetch teachers who teach any of these skills
+    // fetch teachers who teach any of these skills
     let teaches = users_teaches_skills::Entity::find()
         .filter(users_teaches_skills::Column::SkillId.is_in(wanted_ids))
         .all(&ctx.db)
         .await?;
 
-    // 3) score overlaps with level awareness
+    // score overlaps with level awareness
     let mut scores: std::collections::HashMap<i32, usize> = Default::default();
 
     for teach in &teaches {
@@ -156,7 +156,7 @@ pub async fn recommend(auth: MyJWT, State(ctx): State<AppContext>) -> Result<Res
 
     let teacher_ids: Vec<i32> = scores.keys().cloned().collect();
 
-    // 4) fetch users in bulk
+    // fetch users in bulk
     let users_map: std::collections::HashMap<i32, UserModel> = UserEntity::find()
         .filter(users::Column::Id.is_in(teacher_ids.clone()))
         .all(&ctx.db)
@@ -165,10 +165,21 @@ pub async fn recommend(auth: MyJWT, State(ctx): State<AppContext>) -> Result<Res
         .map(|u| (u.id, u))
         .collect();
 
-    let skill_ids: Vec<i32> = teaches
+    let all_teaches = users_teaches_skills::Entity::find()
+        .filter(users_teaches_skills::Column::UserId.is_in(teacher_ids.clone()))
+        .all(&ctx.db)
+        .await?;
+
+    let all_learns = users_learns_skills::Entity::find()
+        .filter(users_learns_skills::Column::UserId.is_in(teacher_ids.clone()))
+        .all(&ctx.db)
+        .await?;
+
+    // fetch ALL related skills (once)
+    let skill_ids: Vec<i32> = all_teaches
         .iter()
         .map(|t| t.skill_id)
-        .chain(wanted_skills.iter().map(|l| l.skill_id))
+        .chain(all_learns.iter().map(|l| l.skill_id))
         .collect();
 
     let skills_map: std::collections::HashMap<i32, skills::Model> = skills::Entity::find()
@@ -179,43 +190,35 @@ pub async fn recommend(auth: MyJWT, State(ctx): State<AppContext>) -> Result<Res
         .map(|s| (s.id, s))
         .collect();
 
-    // 6) teaches skills enriched
-    let teaches_map: std::collections::HashMap<i32, Vec<SkillWithMeta>> =
-        users_teaches_skills::Entity::find()
-            .filter(users_teaches_skills::Column::UserId.is_in(teacher_ids.clone()))
-            .all(&ctx.db)
-            .await?
-            .into_iter()
-            .fold(Default::default(), |mut acc, t| {
-                if let Some(skill) = skills_map.get(&t.skill_id) {
-                    acc.entry(t.user_id).or_default().push(SkillWithMeta {
-                        skill_id: skill.id,
-                        skill_name: skill.name.clone(),
-                        level: t.level,
-                    });
-                }
-                acc
-            });
+    //  enrich teaches
+    let teaches_map: std::collections::HashMap<i32, Vec<SkillWithMeta>> = all_teaches
+        .into_iter()
+        .fold(Default::default(), |mut acc, t| {
+            if let Some(skill) = skills_map.get(&t.skill_id) {
+                acc.entry(t.user_id).or_default().push(SkillWithMeta {
+                    skill_id: skill.id,
+                    skill_name: skill.name.clone(),
+                    level: t.level,
+                });
+            }
+            acc
+        });
 
-    // 7) learns skills enriched
-    let learns_map: std::collections::HashMap<i32, Vec<SkillWithMeta>> =
-        users_learns_skills::Entity::find()
-            .filter(users_learns_skills::Column::UserId.is_in(teacher_ids.clone()))
-            .all(&ctx.db)
-            .await?
-            .into_iter()
-            .fold(Default::default(), |mut acc, l| {
-                if let Some(skill) = skills_map.get(&l.skill_id) {
-                    acc.entry(l.user_id).or_default().push(SkillWithMeta {
-                        skill_id: skill.id,
-                        skill_name: skill.name.clone(),
-                        level: l.level,
-                    });
-                }
-                acc
-            });
+    //  enrich learns
+    let learns_map: std::collections::HashMap<i32, Vec<SkillWithMeta>> = all_learns
+        .into_iter()
+        .fold(Default::default(), |mut acc, l| {
+            if let Some(skill) = skills_map.get(&l.skill_id) {
+                acc.entry(l.user_id).or_default().push(SkillWithMeta {
+                    skill_id: skill.id,
+                    skill_name: skill.name.clone(),
+                    level: l.level,
+                });
+            }
+            acc
+        });
 
-    // 8) assemble
+    //  assemble response
     let mut matches: Vec<TeacherMatch> = scores
         .into_iter()
         .filter_map(|(teacher_id, score)| {
