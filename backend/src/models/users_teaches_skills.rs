@@ -1,4 +1,4 @@
-use crate::models::_entities::skills::{Entity as SkillsEntity, Model as SkillsModel};
+use crate::models::_entities::skills::Entity as SkillsEntity;
 
 pub use super::_entities::users_teaches_skills::{ActiveModel, Column, Entity, Model};
 use sea_orm::entity::prelude::*;
@@ -14,9 +14,16 @@ impl ActiveModelBehavior for ActiveModel {
     }
 }
 
+#[derive(serde::Serialize)]
+pub struct TeachSkillResponse {
+    pub skill_id: i32,
+    pub skill_name: String,
+    pub level: String,
+}
+
 // implement your read-oriented logic here
 impl Model {
-    pub async fn find_teach_skills(db: &DbConn, user_id: i32) -> Vec<SkillsModel> {
+    pub async fn find_teach_skills(db: &DbConn, user_id: i32) -> Vec<TeachSkillResponse> {
         let skills = Entity::find()
             .filter(Column::UserId.eq(user_id))
             .find_also_related(SkillsEntity)
@@ -28,7 +35,13 @@ impl Model {
         skills
             .unwrap()
             .into_iter()
-            .filter_map(|(_teach, skill)| skill) // Keep only the joined skill models
+            .filter_map(|(teach, skill)| {
+                skill.map(|s| TeachSkillResponse {
+                    skill_id: s.id,
+                    skill_name: s.name,
+                    level: teach.level.clone(),
+                })
+            })
             .collect()
     }
 }
