@@ -4,32 +4,33 @@ use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
-#[sea_orm(table_name = "skills")]
+#[sea_orm(table_name = "chats")]
 pub struct Model {
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
     #[sea_orm(primary_key)]
     pub id: i32,
+    #[sea_orm(column_type = "Text")]
+    pub msg: String,
     #[sea_orm(unique)]
-    pub name: String,
+    pub group: String,
+    pub sender: i32,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::users_learns_skills::Entity")]
-    UsersLearnsSkills,
-    #[sea_orm(has_many = "super::users_teaches_skills::Entity")]
-    UsersTeachesSkills,
+    #[sea_orm(
+        belongs_to = "super::users::Entity",
+        from = "Column::Sender",
+        to = "super::users::Column::Id",
+        on_update = "Cascade",
+        on_delete = "Cascade"
+    )]
+    Users,
 }
 
-impl Related<super::users_learns_skills::Entity> for Entity {
+impl Related<super::users::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::UsersLearnsSkills.def()
-    }
-}
-
-impl Related<super::users_teaches_skills::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::UsersTeachesSkills.def()
+        Relation::Users.def()
     }
 }

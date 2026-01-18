@@ -39,9 +39,6 @@ pub async fn request_google_token(authorization_code: &str) -> Option<GoogleOAut
     if response.status().is_success() {
         Some(response.json::<GoogleOAuthResponse>().await.unwrap())
     } else {
-        println!("{:#?}", response);
-        let body = response.text().await.unwrap();
-        println!("body: {}", body);
         return None;
     }
 }

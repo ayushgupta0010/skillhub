@@ -2,5 +2,9 @@
 
 pub mod prelude;
 
+pub mod chats;
+pub mod contacts;
 pub mod skills;
 pub mod users;
+pub mod users_learns_skills;
+pub mod users_teaches_skills;

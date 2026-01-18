@@ -56,6 +56,7 @@ pub async fn login(
             email: Set(email),
             provider: Set("google".to_string()),
             token_version: Set(1),
+            profile_pic: Set(Some(google_user.picture)),
             ..Default::default()
         }
         .save(&ctx.db)

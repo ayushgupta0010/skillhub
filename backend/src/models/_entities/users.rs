@@ -17,7 +17,34 @@ pub struct Model {
     pub discord_id: Option<String>,
     pub provider: String,
     pub token_version: i32,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub profile_pic: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+pub enum Relation {
+    #[sea_orm(has_many = "super::chats::Entity")]
+    Chats,
+    #[sea_orm(has_many = "super::users_learns_skills::Entity")]
+    UsersLearnsSkills,
+    #[sea_orm(has_many = "super::users_teaches_skills::Entity")]
+    UsersTeachesSkills,
+}
+
+impl Related<super::chats::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Chats.def()
+    }
+}
+
+impl Related<super::users_learns_skills::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::UsersLearnsSkills.def()
+    }
+}
+
+impl Related<super::users_teaches_skills::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::UsersTeachesSkills.def()
+    }
+}
