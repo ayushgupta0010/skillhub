@@ -1,8 +1,6 @@
-import Image from "next/image";
-
 import { PageMain } from "./components/pageMain.jsx"
 
-export default function Home() {
+export default async function Home() {
   return (
     <PageMain>
 

@@ -1,8 +1,7 @@
 @import "tailwindcss";
 
-/* In v4, you can just use the @theme block or standard CSS */
-@theme {
-  --color-primary: #3b82f6;
+html, body{
+  height: 100%;
 }
 
 /* Custom components in v4 are just written as standard CSS */
