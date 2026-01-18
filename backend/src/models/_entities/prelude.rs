@@ -2,3 +2,5 @@
 
 pub use super::skills::Entity as Skills;
 pub use super::users::Entity as Users;
+pub use super::users_learns_skills::Entity as UsersLearnsSkills;
+pub use super::users_teaches_skills::Entity as UsersTeachesSkills;

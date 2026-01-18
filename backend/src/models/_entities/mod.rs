@@ -4,3 +4,5 @@ pub mod prelude;
 
 pub mod skills;
 pub mod users;
+pub mod users_learns_skills;
+pub mod users_teaches_skills;
