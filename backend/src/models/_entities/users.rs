@@ -17,6 +17,8 @@ pub struct Model {
     pub discord_id: Option<String>,
     pub provider: String,
     pub token_version: i32,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub profile_pic: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
